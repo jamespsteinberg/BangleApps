@@ -18,7 +18,7 @@ function normalTo28HourDate(date) {
     "dayText": getWeirdDayName(weirdDayOfTheWeek),
     "day": weirdDayOfTheWeek,
     "hourText": addLeadingZero(hourCount - (weirdDayOfTheWeek * 28)),
-    "hour": date.getHours(),
+    "hour": hourCount - (weirdDayOfTheWeek * 28),
     "minuteText": addLeadingZero(date.getMinutes()),
     "minute": date.getMinutes(),
     "secondText": addLeadingZero(date.getSeconds()),
@@ -87,46 +87,106 @@ function getNormalDateText(date) {
   };
   return normalDate;
 }
+
 const dayWidth = 28;
 const timeWidth = 42;
 const screenWidth = 239;
 const weirdWeekDayHeight = 225;
+const weirdSleepDayHeight = 205;
+const awakeHours = 19;
+const sleepHours = 9;
+
+
+
 
 function dailyHourCount(hours, minutes) {
   return hours + (minutes / 60);
 }
 
+
+
+
+
+
 function getWeirdDayBlockSize() {
   return ((dayWidth / timeWidth) * screenWidth);
 }
 
-function printWeirdWeekDay(dayText, percentOfDay, startingPoint) {
-  g.drawRect(startingPoint - (percentOfDay * getWeirdDayBlockSize()), weirdWeekDayHeight - 10, startingPoint - (percentOfDay * getWeirdDayBlockSize()) + getWeirdDayBlockSize(), weirdWeekDayHeight + 10);
-  g.drawString(dayText, startingPoint - (percentOfDay * getWeirdDayBlockSize()) + (getWeirdDayBlockSize() / 2), weirdWeekDayHeight);
+function printWeirdWeekDay(dayText, percentOfBlock, startingPoint) {
+  g.drawRect(startingPoint - (percentOfBlock * getWeirdDayBlockSize()), weirdWeekDayHeight - 10, startingPoint - (percentOfBlock * getWeirdDayBlockSize()) + getWeirdDayBlockSize(), weirdWeekDayHeight + 10);
+  g.drawString(dayText, startingPoint - (percentOfBlock * getWeirdDayBlockSize()) + (getWeirdDayBlockSize() / 2), weirdWeekDayHeight);
 }
 
 function printWeirdWeekDays(weirdDate) {
-  var percentOfDay = (dailyHourCount(weirdDate.hour, weirdDate.minute) / dayWidth);
-  printWeirdWeekDay(weirdDate.dayText, percentOfDay, screenWidth / 2);
-  printWeirdWeekDay(getWeirdDayName((weirdDate.day + 6 - 1) % 6), percentOfDay, screenWidth / 2 - getWeirdDayBlockSize());
-  printWeirdWeekDay(getWeirdDayBlockSize((weirdDate.day + 6 + 1) % 6), percentOfDay, screenWidth / 2 + getWeirdDayBlockSize());
+  var percentOfBlock = dailyHourCount(weirdDate.hour, weirdDate.minute) / dayWidth;
+  printWeirdWeekDay(weirdDate.dayText, percentOfBlock, screenWidth / 2);
+  printWeirdWeekDay(getWeirdDayName((weirdDate.day + 6 - 1) % 6), percentOfBlock, screenWidth / 2 - getWeirdDayBlockSize());
+  printWeirdWeekDay(getWeirdDayName((weirdDate.day + 6 + 1) % 6), percentOfBlock, screenWidth / 2 + getWeirdDayBlockSize());
 }
 
-function getWeirdSleepBlockSize() {
-  return ((dayWidth / timeWidth) * screenWidth);
+
+
+
+
+
+
+
+
+
+function printWeirdSleepDay(sleepText, blockSize, percentOfBlock, startingPoint) {
+  g.drawRect(startingPoint - (percentOfBlock * blockSize), weirdSleepDayHeight - 10, startingPoint - (percentOfBlock * blockSize) + blockSize, weirdSleepDayHeight + 10);
+  g.drawString(sleepText, startingPoint - (percentOfBlock * blockSize) + (blockSize / 2), weirdSleepDayHeight);
 }
 
-function printWeirdWeekDay(dayText, percentOfDay, startingPoint) {
-  g.drawRect(startingPoint - (percentOfDay * getWeirdSleepBlockSize()), weirdWeekDayHeight - 10, startingPoint - (percentOfDay * getWeirdSleepBlockSize()) + getWeirdSleepBlockSize(), weirdWeekDayHeight + 10);
-  g.drawString(dayText, startingPoint - (percentOfDay * getWeirdSleepBlockSize()) + (getWeirdSleepBlockSize() / 2), weirdWeekDayHeight);
+
+
+function printWeirdSleepDays(weirdDate) {
+  var sleepInfo = getSleepInfo(weirdDate.hour);
+  var percentOfBlock = sleepInfo.internalBlockTime / sleepInfo.blockWidth;
+  printWeirdSleepDay(sleepInfo.text, sleepInfo.blockSize, percentOfBlock, screenWidth / 2);
+
+  printWeirdSleepDay(sleepInfo.otherText, sleepInfo.blockSize, percentOfBlock, screenWidth / 2 - sleepInfo.blockSize);
+  printWeirdSleepDay(sleepInfo.text, sleepInfo.blockSize, percentOfBlock, screenWidth / 2 - (sleepInfo.blockSize * 2));
+
+  printWeirdSleepDay(sleepInfo.otherText, sleepInfo.blockSize, percentOfBlock, screenWidth / 2 + sleepInfo.blockSize);
+  printWeirdSleepDay(sleepInfo.text, sleepInfo.blockSize, percentOfBlock, screenWidth / 2 + (sleepInfo.blockSize * 2));
 }
 
-function printWeirdWeekDays(weirdDate) {
-  var percentOfDay = (dailyHourCount(weirdDate.hour, weirdDate.minute) / dayWidth);
-  printWeirdWeekDay(weirdDate.dayText, percentOfDay, screenWidth / 2);
-  printWeirdWeekDay(getWeirdDayName((weirdDate.day + 6 - 1) % 6), percentOfDay, screenWidth / 2 - getWeirdSleepBlockSize());
-  printWeirdWeekDay(getWeirdDayName((weirdDate.day + 6 + 1) % 6), percentOfDay, screenWidth / 2 + getWeirdSleepBlockSize());
+function getSleepInfo(weirdHour) {
+  var text;
+  var otherText;
+  var blockSize;
+  var blockWidth;
+  var internalBlockTime;
+  if(weirdHour >= 8 || weirdHour <= 27) {
+    text = "Awake";
+    otherText = "Sleep";
+    blockSize = (dayWidth / timeWidth) * screenWidth * (awakeHours / dayWidth);
+    blockWidth = awakeHours;
+    internalBlockTime = weirdHour - 8;
+  } else {
+    text = "Sleep";
+    otherText = "Awake";
+    blockSize = (dayWidth / timeWidth) * screenWidth * (sleepHours / dayWidth);
+    blockWidth = sleepHours;
+    if(weirdHour <= 8) {
+      internalBlockTime = weirdHour + 1;
+    } else {
+      internalBlockTime = 0;
+    }
+  }
+
+  return {
+    "text": text,
+    "otherText": otherText,
+    "blockSize": blockSize,
+    "blockWidth": blockWidth,
+    "internalBlockTime": internalBlockTime
+  };
 }
+
+
+
 
 function printTime() {
   var now = new Date();
@@ -137,6 +197,7 @@ function printTime() {
 
   E.showMessage(message, "Date");
   printWeirdWeekDays(weirdDate);
+  printWeirdSleepDays(weirdDate);
 }
 
 printTime();
