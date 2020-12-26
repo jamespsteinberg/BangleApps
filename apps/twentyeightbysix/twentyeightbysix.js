@@ -49,25 +49,25 @@ function getWeirdDayName(weirdDayOfTheWeek) {
 
 function getNormalDayName(normalDayOfTheWeek) {
   if(normalDayOfTheWeek == 0) {
-    return "Monday";
+    return "Sunday";
   }
   else if(normalDayOfTheWeek == 1) {
-    return "Tuesday";
+    return "Monday";
   }
   else if(normalDayOfTheWeek == 2) {
-    return "Wednesday";
+    return "Tuesday";
   }
   else if(normalDayOfTheWeek == 3) {
-    return "Thursday";
+    return "Wednesday";
   }
   else if(normalDayOfTheWeek == 4) {
-    return "Friday";
+    return "Thursday";
   }
   else if(normalDayOfTheWeek == 5) {
-    return "Saturday";
+    return "Friday";
   }
   else if(normalDayOfTheWeek == 6) {
-    return "Sunday";
+    return "Saturday";
   }
 }
 
@@ -81,21 +81,31 @@ function addLeadingZero(number) {
 function getNormalDateText(date) {
   var normalDate = {
     "dayText": getNormalDayName(date.getDay()),
+    "day": date.getDay(),
     "hourText": addLeadingZero(date.getHours()),
+    "hour": date.getHours(),
     "minuteText": addLeadingZero(date.getMinutes()),
+    "minute": date.getMinutes(),
     "secondText": addLeadingZero(date.getSeconds()),
   };
   return normalDate;
 }
 
-const dayWidth = 28;
+
 const timeWidth = 42;
 const screenWidth = 239;
-const weirdWeekDayHeight = 225;
-const weirdSleepDayHeight = 205;
-const awakeHours = 19;
-const sleepHours = 9;
 
+const weirdDayWidth = 28;
+const weirdWeekDayHeight = 230;
+const weirdSleepDayHeight = 210;
+const weirdAwakeHours = 19;
+const weirdSleepHours = 9;
+
+const normalDayWidth = 24;
+const normalWeekDayHeight = 10;
+const normalSleepDayHeight = 30;
+const normalAwakeHours = 15;
+const normalSleepHours = 9;
 
 
 
@@ -109,7 +119,7 @@ function dailyHourCount(hours, minutes) {
 
 
 function getWeirdDayBlockSize() {
-  return ((dayWidth / timeWidth) * screenWidth);
+  return ((weirdDayWidth / timeWidth) * screenWidth);
 }
 
 function printWeirdWeekDay(dayText, percentOfBlock, startingPoint) {
@@ -118,7 +128,7 @@ function printWeirdWeekDay(dayText, percentOfBlock, startingPoint) {
 }
 
 function printWeirdWeekDays(weirdDate) {
-  var percentOfBlock = dailyHourCount(weirdDate.hour, weirdDate.minute) / dayWidth;
+  var percentOfBlock = dailyHourCount(weirdDate.hour, weirdDate.minute) / weirdDayWidth;
   printWeirdWeekDay(weirdDate.dayText, percentOfBlock, screenWidth / 2);
   printWeirdWeekDay(getWeirdDayName((weirdDate.day + 6 - 1) % 6), percentOfBlock, screenWidth / 2 - getWeirdDayBlockSize());
   printWeirdWeekDay(getWeirdDayName((weirdDate.day + 6 + 1) % 6), percentOfBlock, screenWidth / 2 + getWeirdDayBlockSize());
@@ -141,7 +151,7 @@ function printWeirdSleepDay(sleepText, blockSize, percentOfBlock, startingPoint)
 
 
 function printWeirdSleepDays(weirdDate) {
-  var sleepInfo = getSleepInfo(weirdDate.hour);
+  var sleepInfo = getWeirdSleepInfo(weirdDate.hour);
   var percentOfBlock = sleepInfo.internalBlockTime / sleepInfo.blockWidth;
   printWeirdSleepDay(sleepInfo.text, sleepInfo.blockSize, percentOfBlock, screenWidth / 2);
 
@@ -152,7 +162,7 @@ function printWeirdSleepDays(weirdDate) {
   printWeirdSleepDay(sleepInfo.text, sleepInfo.blockSize, percentOfBlock, screenWidth / 2 + (sleepInfo.blockSize * 2));
 }
 
-function getSleepInfo(weirdHour) {
+function getWeirdSleepInfo(weirdHour) {
   var text;
   var otherText;
   var blockSize;
@@ -161,14 +171,14 @@ function getSleepInfo(weirdHour) {
   if(weirdHour >= 8 || weirdHour <= 27) {
     text = "Awake";
     otherText = "Sleep";
-    blockSize = (dayWidth / timeWidth) * screenWidth * (awakeHours / dayWidth);
-    blockWidth = awakeHours;
+    blockSize = (weirdDayWidth / timeWidth) * screenWidth * (weirdAwakeHours / weirdDayWidth);
+    blockWidth = weirdAwakeHours;
     internalBlockTime = weirdHour - 8;
   } else {
     text = "Sleep";
     otherText = "Awake";
-    blockSize = (dayWidth / timeWidth) * screenWidth * (sleepHours / dayWidth);
-    blockWidth = sleepHours;
+    blockSize = (weirdDayWidth / timeWidth) * screenWidth * (weirdSleepHours / weirdDayWidth);
+    blockWidth = weirdSleepHours;
     if(weirdHour <= 8) {
       internalBlockTime = weirdHour + 1;
     } else {
@@ -188,6 +198,95 @@ function getSleepInfo(weirdHour) {
 
 
 
+
+
+
+
+
+
+function getNormalDayBlockSize() {
+  return ((normalDayWidth / timeWidth) * screenWidth);
+}
+
+function printNormalWeekDay(dayText, percentOfBlock, startingPoint) {
+  g.drawRect(startingPoint - (percentOfBlock * getNormalDayBlockSize()), normalWeekDayHeight - 10, startingPoint - (percentOfBlock * getNormalDayBlockSize()) + getNormalDayBlockSize(), normalWeekDayHeight + 10);
+  g.drawString(dayText, startingPoint - (percentOfBlock * getNormalDayBlockSize()) + (getNormalDayBlockSize() / 2), normalWeekDayHeight);
+}
+
+function printNormalWeekDays(normalDate) {
+  var percentOfBlock = dailyHourCount(normalDate.hour, normalDate.minute) / normalDayWidth;
+  printNormalWeekDay(normalDate.dayText, percentOfBlock, screenWidth / 2);
+  printNormalWeekDay(getNormalDayName((normalDate.day + 7 - 1) % 7), percentOfBlock, screenWidth / 2 - getNormalDayBlockSize());
+  printNormalWeekDay(getNormalDayName((normalDate.day + 7 + 1) % 7), percentOfBlock, screenWidth / 2 + getNormalDayBlockSize());
+}
+
+
+
+
+
+
+
+
+
+
+function printNormalSleepDay(sleepText, blockSize, percentOfBlock, startingPoint) {
+  g.drawRect(startingPoint - (percentOfBlock * blockSize), normalSleepDayHeight - 10, startingPoint - (percentOfBlock * blockSize) + blockSize, normalSleepDayHeight + 10);
+  g.drawString(sleepText, startingPoint - (percentOfBlock * blockSize) + (blockSize / 2), normalSleepDayHeight);
+}
+
+
+
+function printNormalSleepDays(normalDate) {
+  var sleepInfo = getNormalSleepInfo(normalDate.hour);
+  var percentOfBlock = sleepInfo.internalBlockTime / sleepInfo.blockWidth;
+  printNormalSleepDay(sleepInfo.text, sleepInfo.blockSize, percentOfBlock, screenWidth / 2);
+
+  printNormalSleepDay(sleepInfo.otherText, sleepInfo.blockSize, percentOfBlock, screenWidth / 2 - sleepInfo.blockSize);
+  printNormalSleepDay(sleepInfo.text, sleepInfo.blockSize, percentOfBlock, screenWidth / 2 - (sleepInfo.blockSize * 2));
+
+  printNormalSleepDay(sleepInfo.otherText, sleepInfo.blockSize, percentOfBlock, screenWidth / 2 + sleepInfo.blockSize);
+  printNormalSleepDay(sleepInfo.text, sleepInfo.blockSize, percentOfBlock, screenWidth / 2 + (sleepInfo.blockSize * 2));
+}
+
+function getNormalSleepInfo(normalHour) {
+  var text;
+  var otherText;
+  var blockSize;
+  var blockWidth;
+  var internalBlockTime;
+  if(normalHour >= 8 || normalHour <= 23) {
+    text = "Awake";
+    otherText = "Sleep";
+    blockSize = (normalDayWidth / timeWidth) * screenWidth * (normalAwakeHours / normalDayWidth);
+    blockWidth = normalAwakeHours;
+    internalBlockTime = normalHour - 8;
+  } else {
+    text = "Sleep";
+    otherText = "Awake";
+    blockSize = (normalDayWidth / timeWidth) * screenWidth * (normalSleepHours / normalDayWidth);
+    blockWidth = normalSleepHours;
+    if(normalHour <= 8) {
+      internalBlockTime = normalHour + 1;
+    } else {
+      internalBlockTime = 0;
+    }
+  }
+
+  return {
+    "text": text,
+    "otherText": otherText,
+    "blockSize": blockSize,
+    "blockWidth": blockWidth,
+    "internalBlockTime": internalBlockTime
+  };
+}
+
+
+
+
+
+
+
 function printTime() {
   var now = new Date();
   var weirdDate = normalTo28HourDate(now);
@@ -195,9 +294,11 @@ function printTime() {
 
   var message = "\n\n \n" + normalDate.dayText + "\n " + normalDate.hourText + ":" + normalDate.minuteText + ":" + normalDate.secondText + "\n\n \n" + weirdDate.dayText + "\n " + weirdDate.hourText + ":" + weirdDate.minuteText + ":" + weirdDate.secondText;
 
-  E.showMessage(message, "Date");
+  E.showMessage(message, "");
   printWeirdWeekDays(weirdDate);
   printWeirdSleepDays(weirdDate);
+  printNormalWeekDays(normalDate);
+  printNormalSleepDays(normalDate);
 }
 
 printTime();
