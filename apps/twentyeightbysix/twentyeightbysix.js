@@ -27,6 +27,25 @@ const awakeBlockColor = "#FFFFFF";
 const dayTextColor = "#FFFFFF";
 const dayBlockColor = "#2c2e3a";
 
+const quotes = [
+  ["", "Drop the", "ancient", "way of", "sleeping", ""],
+  ["Four day work", "weeks and you", "still get the", "two day.", "weekend", ""],
+  ["", "New", "and", "improved", "28 hour days.", ""],
+  ["", "18.5 hours of", "wakeful time.", "8.5 hours free.", "", ""],
+  ["", "Six 28 hour days", "a week instead", "of seven 24", "hour days.", ""],
+  ["", "18 Hours", "between", "work periods.", "Not 16.", ""],
+  ["", "Sleep late on", "weekends without", "missing all the", "daylight.", ""],
+  ["Trouble", "sleeping?", "Stay up until", "you are exhausted", "with four extra", "hours a day."],
+  ["", "56 hour", "weekends", "beats a 48", "hour weekend.", ""],
+  ["", "Still syncs up", "every Monday", "with the old 24", "hour a day week.", ""],
+  ["", "Circadian", "rhythm", "shmircadian", "shrhythm.", ""],
+  ["Studies showed", "people calculate", "better and have", "worse reaction", "times on this", "schedule."],
+  ["", "This schedule", "will eventually", "drive one stark", "raving mad.", ""],
+  ["No more", "Tuesdays.", "Nobody has ever", "missed", "Tuesdays.", ""],
+  ["Step 1.", "Don’t pay any", "attention", "to the", "sun anymore.", ""]
+];
+
+var quoteId = Math.floor(Math.random() * Math.floor(quotes.length - 1));
 
 function hoursFromWeekStart(dayOfTheWeek, todayHours) {
   var previousDayHours;
@@ -40,6 +59,7 @@ function hoursFromWeekStart(dayOfTheWeek, todayHours) {
 }
 
 function normalTo28HourDate(date) {
+
   var hourCount = hoursFromWeekStart(date.getDay(), date.getHours());
   // Weird Days: 0-Tuesday to 5-Sunday
   var weirdDayOfTheWeek = Math.round((hourCount / 28) - 0.5);
@@ -417,7 +437,7 @@ function getNormalEvent(date) {
     }
     return "Dinner";
   }
-  else if(date.dayText == "Saturday" || "Sunday") {
+  else if(date.dayText == "Saturday" || date.dayText == "Sunday") {
     if(date.dayText == "Sunday" && date.hour == 23 && date.minute >= 45) {
       return "Weekend Ending";
     }
@@ -463,7 +483,7 @@ function getWeirdEvent(date) {
     }
     return "Dinner";
   }
-  else if(date.dayText == "Saturday" || "Sunday") {
+  else if(date.dayText == "Saturday" || date.dayText == "Sunday") {
     if(date.dayText == "Sunday" && date.hour == 27 && date.minute >= 45) {
       return "Weekend Ending";
     }
@@ -496,14 +516,12 @@ function getWeirdHourLabel(hour){
   return ["", "", ""];
 }
 
-
-
-function printTime(now) {
+function printTime(thisDate, isShowTime) {
 
   printBackground();
 
-  var weirdDate = normalTo28HourDate(now);
-  var normalDate = getNormalDateText(now);
+  var weirdDate = normalTo28HourDate(thisDate);
+  var normalDate = getNormalDateText(thisDate);
 
   var normalTime = normalDate.hourText + ":" + normalDate.minuteText;
   var weirdTime = weirdDate.hourText + ":" + weirdDate.minuteText;
@@ -511,17 +529,32 @@ function printTime(now) {
   g.setFontAlign(0, 0, 0);
   g.setColor(mainTextColor);
 
-  g.setFont("Vector", 36);
-  g.drawString(weirdTime, (screenWidth / 2) + 3,  (screenHeight / 2) + 3);
+  if(isShowTime) {
+    g.setFont("Vector", 36);
+    g.drawString(weirdTime, (screenWidth / 2) + 3,  (screenHeight / 2) + 3);
 
-  g.setFont("6x8", 2);
-  g.drawString(normalTime, screenWidth / 2 + 3, 84);
+    g.setFont("6x8", 2);
+    g.drawString(normalTime, screenWidth / 2 + 3, 84);
 
-  g.setFont("6x8", 1);
-  var threeLabels = getWeirdHourLabel(weirdDate.hour);
-  g.drawString(threeLabels[0], screenWidth / 2 + 3, weirdSleepDayHeight - 70);
-  g.drawString(threeLabels[1], screenWidth / 2 + 3, weirdSleepDayHeight - 60);
-  g.drawString(threeLabels[2], screenWidth / 2 + 3, weirdSleepDayHeight - 50);
+    g.setFont("6x8", 1);
+    var threeLabels = getWeirdHourLabel(weirdDate.hour);
+    g.drawString(threeLabels[0], screenWidth / 2 + 3, weirdSleepDayHeight - 70);
+    g.drawString(threeLabels[1], screenWidth / 2 + 3, weirdSleepDayHeight - 60);
+    g.drawString(threeLabels[2], screenWidth / 2 + 3, weirdSleepDayHeight - 50);
+
+  } else {
+    g.setFont("6x8", 1);
+    g.drawString(quotes[quoteId][0], (screenWidth / 2) + 1,  (screenHeight / 2) - 25);
+    g.drawString(quotes[quoteId][1], (screenWidth / 2) + 1,  (screenHeight / 2) - 15);
+    g.drawString(quotes[quoteId][2], (screenWidth / 2) + 1,  (screenHeight / 2) - 5);
+    g.drawString(quotes[quoteId][3], (screenWidth / 2) + 1,  (screenHeight / 2) + 5);
+    g.drawString(quotes[quoteId][4], (screenWidth / 2) + 1,  (screenHeight / 2) + 15);
+    g.drawString(quotes[quoteId][5], (screenWidth / 2) + 1,  (screenHeight / 2) + 25);
+
+    g.setFont("6x8", 1);
+    g.drawString("Forward ->", screenWidth - 40, normalSleepDayHeight + 35);
+    g.drawString("Backwards ->", screenWidth - 40, weirdSleepDayHeight - 35);
+  }
 
   g.setFont("6x8", 1);
   g.drawString(getNormalEvent(normalDate), screenWidth / 2 + 3, normalSleepDayHeight + 16);
@@ -560,15 +593,21 @@ function printBackground() {
 
 var now = new Date();
 var minute = now.getMinutes();
-printTime(now);
+var lookingDate = false;
+var lookBack = false;
+var timeout = false;
+printTime(now, true);
 
 function isPrintTime() {
   var currentTime = new Date();
-  if(currentTime.getMinutes() != minute) {
+  if((currentTime.getMinutes() != minute && lookBack) || lookBack) {
+    lookBack = false;
+    timeout = false;
     minute = currentTime.getMinutes();
-    printTime(currentTime);
+    printTime(currentTime, true);
   }
 }
+
 
 var secondInterval = setInterval(isPrintTime, 1000);
 // Stop updates when LCD is off, restart when on
@@ -581,6 +620,46 @@ Bangle.on('lcdPower',on=>{
   }
 });
 
+function lookCurrent() {
+  lookBack = true;
+}
+
+setWatch(() => {
+  var timeAhead = 3600000 * 12;
+  if(quoteId >= quotes.length - 1) {
+    quoteId = 0;
+  } else {
+    quoteId = quoteId + 1;
+  }
+  if(!lookingDate) {
+    lookingDate = new Date();
+  }
+  lookingDate = new Date(lookingDate.getTime() + timeAhead);
+  printTime(lookingDate, false);
+  if(timeout) {
+    clearTimeout(timeout);
+  }
+  timeout = setTimeout(()=>lookCurrent(), 3000);
+}, BTN1, { repeat: true, edge: "falling" });
+
+setWatch(() => {
+
+  var timeBehind = 3600000 * 12;
+  if(quoteId <= 0) {
+    quoteId = quotes.length - 1;
+  } else {
+    quoteId = quoteId - 1;
+  }
+  if(!lookingDate) {
+    lookingDate = new Date();
+  }
+  lookingDate = new Date(lookingDate.getTime() - timeBehind);
+  printTime(lookingDate, false);
+  if(timeout) {
+    clearTimeout(timeout);
+  }
+  timeout = setTimeout(()=>lookCurrent(), 3000);
+}, BTN3, { repeat: true, edge: "falling" });
 
 Bangle.loadWidgets();
 // Show launcher when middle button pressed
