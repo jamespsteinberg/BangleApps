@@ -42,7 +42,7 @@ const quotes = [
   ["Studies showed", "people calculate", "better and have", "worse reaction", "times on this", "schedule."],
   ["", "This schedule", "will eventually", "drive one stark", "raving mad.", ""],
   ["No more", "Tuesdays.", "Nobody has ever", "missed", "Tuesdays.", ""],
-  ["Step 1.", "Don’t pay any", "attention", "to the", "sun anymore.", ""]
+  ["Step 1.", "Don't pay any", "attention", "to the", "sun anymore.", ""]
 ];
 
 var quoteId = Math.floor(Math.random() * Math.floor(quotes.length - 1));
