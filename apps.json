@@ -2511,7 +2511,7 @@
 },
 { "id": "twentyeightbysix",
   "name": "Twenty-Eight Hour Clock",
-  "shortName":"twentyeightbysix",
+  "shortName": "28x6",
   "icon": "app.png",
   "version":"0.01",
   "description": "A 28 Hour, 6 Day Week Clock. Lines up with a 24 hour, 7 Day Week Clock every Monday.",
