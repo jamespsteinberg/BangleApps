@@ -58,7 +58,7 @@ function normalTo28HourDate(date) {
 
 function getWeirdDayName(weirdDayOfTheWeek) {
   if(weirdDayOfTheWeek == 0) {
-    return "Tuesday";
+    return "Monday";
   }
   else if(weirdDayOfTheWeek == 1) {
     return "Wednesday";
@@ -389,7 +389,97 @@ function drawClockPointer() {
 
 }
 
+function getNormalEvent(date) {
+  if(date.hour == 8) {
+    if(date.minute <= 15) {
+      return "Starting Breakfast";
+    }
+    else if(date.minute >= 45) {
+      return "Ending Breakfast";
+    }
+    return "Breakfast";
+  }
+  else if(date.hour == 12) {
+    if(date.minute <= 15) {
+      return "Starting Lunch";
+    }
+    else if(date.minute >= 45) {
+      return "Ending Lunch";
+    }
+    return "Lunch";
+  }
+  else if(date.hour == 7) {
+    if(date.minute <= 15) {
+      return "Starting Dinner";
+    }
+    else if(date.minute >= 45) {
+      return "Ending Dinner";
+    }
+    return "Dinner";
+  }
+  else if(date.dayText == "Saturday" || "Sunday") {
+    if(date.dayText == "Sunday" && date.hour == 23 && date.minute >= 45) {
+      return "Weekend Ending";
+    }
+    return "Weekend";
+  }
+  else if(date.hour >= 9 || date.hour <= 17) {
+    if(date.dayText == "Monday" && date.hour == 9 && date.minute <= 15) {
+      return "Starting Work";
+    }
+    else if(date.dayText == "Friday" && date.hour == 17 && date.minute >= 45) {
+      return "Work Ending";
+    }
+    return "Work";
+  }
+  return "";
+}
 
+function getWeirdEvent(date) {
+  if(date.hour == 8) {
+    if(date.minute <= 15) {
+      return "Starting Breakfast";
+    }
+    else if(date.minute >= 45) {
+      return "Ending Breakfast";
+    }
+    return "Breakfast";
+  }
+  else if(date.hour == 14) {
+    if(date.minute <= 15) {
+      return "Starting Lunch";
+    }
+    else if(date.minute >= 45) {
+      return "Ending Lunch";
+    }
+    return "Lunch";
+  }
+  else if(date.hour == 23) {
+    if(date.minute <= 15) {
+      return "Starting Dinner";
+    }
+    else if(date.minute >= 45) {
+      return "Ending Dinner";
+    }
+    return "Dinner";
+  }
+  else if(date.dayText == "Saturday" || "Sunday") {
+    if(date.dayText == "Sunday" && date.hour == 27 && date.minute >= 45) {
+      return "Weekend Ending";
+    }
+    return "Weekend";
+  }
+  else if(date.hour >= 9 || date.hour <= 19) {
+    if(date.dayText == "Monday" && date.hour == 9 && date.minute <= 15) {
+      return "Starting Work";
+    }
+    else if(date.dayText == "Friday" && date.hour == 19 && date.minute >= 45) {
+      return "Work Ending";
+    }
+    return "Work";
+  }
+  return "";
+}
 
 
 
@@ -397,6 +487,11 @@ function printTime() {
 
   g.setColor(backgroundColor);
   g.fillRect(0, normalSleepDayHeight + 6, screenWidth, weirdSleepDayHeight - 6);
+
+  g.setColor(mainTextColor);
+  g.drawLine(0, screenHeight / 2, 64, screenHeight / 2);
+  g.drawLine(173, screenHeight / 2, screenWidth, screenHeight / 2);
+
   g.setColor(watchColor);
   g.drawCircle(screenWidth / 2, screenHeight / 2, 55);
   g.drawCircle(screenWidth / 2, screenHeight / 2, 54);
@@ -414,14 +509,17 @@ function printTime() {
   g.setFontAlign(0, 0, 0);
   g.setColor(mainTextColor);
 
-  g.setFont("Vector", 38);
-  g.drawString(weirdTime, screenWidth / 2 + 3,  screenHeight / 2);
+  g.setFont("Vector", 36);
+  g.drawString(weirdTime, (screenWidth / 2) + 3,  (screenHeight / 2) + 3);
 
   g.setFont("6x8", 2);
   g.drawString(normalTime, screenWidth / 2 + 3, 84);
 
-  g.drawString("Work", screenWidth / 2 + 3, normalSleepDayHeight + 18);
-  g.drawString("Meal", screenWidth / 2 + 3, weirdSleepDayHeight - 18);
+  g.drawString("24x7", 30, normalSleepDayHeight + 35);
+  g.drawString("28x6", 30, weirdSleepDayHeight - 35);
+
+  g.drawString(getNormalEvent(normalDate), screenWidth / 2 + 3, normalSleepDayHeight + 18);
+  g.drawString(getWeirdEvent(weirdDate), screenWidth / 2 + 3, weirdSleepDayHeight - 18);
 
   printWeirdWeekDays(weirdDate);
   printNormalWeekDays(normalDate);
@@ -449,4 +547,4 @@ Bangle.on('lcdPower',on=>{
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 // Show launcher when middle button pressed
-setWatch(Bangle.showLauncher, BTN2, { repeat: false, edge: "falling" }); 
+setWatch(Bangle.showLauncher, BTN2, { repeat: false, edge: "falling" });
