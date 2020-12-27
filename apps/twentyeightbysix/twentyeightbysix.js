@@ -601,7 +601,7 @@ printTime(now, true);
 function isPrintTime() {
   var currentTime = new Date();
   var thisMinute = currentTime.getMinutes();
-  if(thisMinute != minute) {
+  if(thisMinute != minute || lookBack) {
     if(lookBack) {
       lookBack = false;
       timeout = false;
@@ -619,12 +619,6 @@ Bangle.on('lcdPower',on=>{
   secondInterval = undefined;
   if (on) {
     secondInterval = setInterval(isPrintTime, 1000);
-  } else {
-    if(secondInterval) {
-      clearInterval(secondInterval);
-      secondInterval = undefined;
-      //console.log("interval is cleared");
-    }
   }
 });
 
