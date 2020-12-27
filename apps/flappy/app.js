@@ -109,7 +109,6 @@ const normalAwakeHours = 15;
 const normalSleepHours = 9;
 
 
-
 function dailyHourCount(hours, minutes) {
   return hours + (minutes / 60);
 }
@@ -312,16 +311,30 @@ function printTime() {
 
   g.setColor("#ECECEC");
   g.fillRect(0, normalSleepDayHeight + 10, screenWidth, weirdSleepDayHeight - 10);
+  g.setColor("#D8D8D8");
+  g.drawCircle(screenWidth / 2, screenHeight / 2, 65);
 
   var now = new Date();
   var weirdDate = normalTo28HourDate(now);
   var normalDate = getNormalDateText(now);
 
-  var message = "\n\n \n" + normalDate.dayText + "\n " + normalDate.hourText + ":" + normalDate.minuteText + ":" + normalDate.secondText + "\n\n \n" + weirdDate.dayText + "\n " + weirdDate.hourText + ":" + weirdDate.minuteText + ":" + weirdDate.secondText;
+  var normalTime = normalDate.hourText + ":" + normalDate.minuteText;
+  var weirdTime = weirdDate.hourText + ":" + weirdDate.minuteText;
 
-  E.showMessage(message, "");
+  g.setFontAlign(0, 0, 0);
+  g.setColor("#000000");
+
+  g.setFont("Vector", 40);
+  g.drawString(weirdTime, screenWidth / 2,  screenHeight / 2);
+
+  g.setFont("6x8", 2);
+  g.drawString(normalTime, screenWidth / 2, screenHeight / 3);
+  g.drawString(normalTime, screenWidth / 2, screenHeight / 3);
+
+  g.setColor("#FFFFFF");
   printWeirdWeekDays(weirdDate);
   printNormalWeekDays(normalDate);
+  g.setColor("#000000");
   printWeirdSleepDays(weirdDate);
   printNormalSleepDays(normalDate);
 
@@ -344,4 +357,4 @@ Bangle.on('lcdPower',on=>{
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 // Show launcher when middle button pressed
-setWatch(Bangle.showLauncher, BTN2, { repeat: false, edge: "falling" });
+setWatch(Bangle.showLauncher, BTN2, { repeat: false, edge: "falling" }); 
