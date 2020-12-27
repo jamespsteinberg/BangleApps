@@ -14,18 +14,18 @@ const normalSleepDayHeight = 28;
 const normalAwakeHours = 15;
 const normalSleepHours = 9;
 
-const backgroundColor = "#308fac";
+const backgroundColor = "#2c2e3a";
 const mainTextColor = "#FFFFFF";
-const watchColor = "#0457ac";
+const watchColor = "#aaaaaa";
 
-const sleepTextColor = "#FFFFFF";
-const sleepBlockColor = "#2c2e3a";
+const sleepTextColor = "#000000";
+const sleepBlockColor = "#D8D8D8";
 
-const awakeTextColor = "#FFFFFF";
-const awakeBlockColor = "#000000";
+const awakeTextColor = "#000000";
+const awakeBlockColor = "#FFFFFF";
 
 const dayTextColor = "#FFFFFF";
-const dayBlockColor = "#0457ac";
+const dayBlockColor = "#2c2e3a";
 
 
 function hoursFromWeekStart(dayOfTheWeek, todayHours) {
@@ -152,17 +152,11 @@ function printWeirdWeekDays(weirdDate) {
 
 
 
-
-
-
-
-
-
-function printWeirdSleepDay(sleepText, blockSize, textColor, blockColor, percentOfBlock, startingPoint) {
+function printWeirdSleepDay(sleepText, blockSize, textColor, blockColor, startingPoint) {
   g.setColor(blockColor);
-  g.fillRect(startingPoint - (percentOfBlock * blockSize), weirdSleepDayHeight - 7, startingPoint - (percentOfBlock * blockSize) + blockSize, weirdSleepDayHeight + 7);
+  g.fillRect(startingPoint, weirdSleepDayHeight - 7, startingPoint + blockSize, weirdSleepDayHeight + 7);
   g.setColor(textColor);
-  g.drawString(sleepText, startingPoint - (percentOfBlock * blockSize) + (blockSize / 2), weirdSleepDayHeight);
+  g.drawString(sleepText, startingPoint + (blockSize / 2), weirdSleepDayHeight);
 }
 
 
@@ -170,19 +164,22 @@ function printWeirdSleepDay(sleepText, blockSize, textColor, blockColor, percent
 function printWeirdSleepDays(weirdDate) {
   var sleepInfo = getWeirdSleepInfo(weirdDate.hour);
   var percentOfBlock = sleepInfo.internalBlockTime / sleepInfo.blockWidth;
-  printWeirdSleepDay(sleepInfo.text, sleepInfo.blockSize, sleepInfo.textColor, sleepInfo.blockColor, percentOfBlock, screenWidth / 2);
+  var startingPoint = (screenWidth / 2) - (percentOfBlock * sleepInfo.blockSize);
 
-  printWeirdSleepDay(sleepInfo.otherText, sleepInfo.blockSize, sleepInfo.otherTextColor, sleepInfo.otherBlockColor, percentOfBlock, screenWidth / 2 - sleepInfo.blockSize);
-  printWeirdSleepDay(sleepInfo.text, sleepInfo.blockSize, sleepInfo.textColor, sleepInfo.blockColor, percentOfBlock, screenWidth / 2 - (sleepInfo.blockSize * 2));
+  printWeirdSleepDay(sleepInfo.text, sleepInfo.blockSize, sleepInfo.textColor, sleepInfo.blockColor, startingPoint);
 
-  printWeirdSleepDay(sleepInfo.otherText, sleepInfo.blockSize, sleepInfo.otherTextColor, sleepInfo.otherBlockColor, percentOfBlock, screenWidth / 2 + sleepInfo.blockSize);
-  printWeirdSleepDay(sleepInfo.text, sleepInfo.blockSize, sleepInfo.textColor, sleepInfo.blockColor, percentOfBlock, screenWidth / 2 + (sleepInfo.blockSize * 2));
+  printWeirdSleepDay(sleepInfo.otherText, sleepInfo.otherBlockSize, sleepInfo.otherTextColor, sleepInfo.otherBlockColor, startingPoint - sleepInfo.otherBlockSize);
+  printWeirdSleepDay(sleepInfo.text, sleepInfo.blockSize, sleepInfo.textColor, sleepInfo.blockColor, startingPoint - sleepInfo.otherBlockSize - sleepInfo.blockSize);
+
+  printWeirdSleepDay(sleepInfo.otherText, sleepInfo.otherBlockSize, sleepInfo.otherTextColor, sleepInfo.otherBlockColor, startingPoint + sleepInfo.blockSize);
+  printWeirdSleepDay(sleepInfo.text, sleepInfo.blockSize, sleepInfo.textColor, sleepInfo.blockColor, startingPoint + sleepInfo.otherBlockSize + sleepInfo.blockSize);
 }
 
 function getWeirdSleepInfo(weirdHour) {
   var text;
   var otherText;
   var blockSize;
+  var otherBlockSize;
   var blockWidth;
   var internalBlockTime;
   var textColor;
@@ -193,6 +190,7 @@ function getWeirdSleepInfo(weirdHour) {
     text = "Awake";
     otherText = "Sleep";
     blockSize = (weirdDayWidth / timeWidth) * screenWidth * (weirdAwakeHours / weirdDayWidth);
+    otherBlockSize = (weirdDayWidth / timeWidth) * screenWidth * (weirdSleepHours / weirdDayWidth);
     blockWidth = weirdAwakeHours;
     textColor = awakeTextColor;
     blockColor = awakeBlockColor;
@@ -203,6 +201,7 @@ function getWeirdSleepInfo(weirdHour) {
     text = "Sleep";
     otherText = "Awake";
     blockSize = (weirdDayWidth / timeWidth) * screenWidth * (weirdSleepHours / weirdDayWidth);
+    otherBlockSize = (weirdDayWidth / timeWidth) * screenWidth * (weirdAwakeHours / weirdDayWidth);
     blockWidth = weirdSleepHours;
     textColor = sleepTextColor;
     blockColor = sleepBlockColor;
@@ -219,6 +218,7 @@ function getWeirdSleepInfo(weirdHour) {
     "text": text,
     "otherText": otherText,
     "blockSize": blockSize,
+    "otherBlockSize": otherBlockSize,
     "blockWidth": blockWidth,
     "textColor": textColor,
     "blockColor": blockColor,
@@ -266,31 +266,35 @@ function printNormalWeekDays(normalDate) {
 
 
 
-function printNormalSleepDay(sleepText, blockSize, textColor, blockColor, percentOfBlock, startingPoint) {
+function printNormalSleepDay(sleepText, blockSize, textColor, blockColor, startingPoint) {
   g.setColor(blockColor);
-  g.fillRect(startingPoint - (percentOfBlock * blockSize), normalSleepDayHeight - 8, startingPoint - (percentOfBlock * blockSize) + blockSize, normalSleepDayHeight + 6);
+  g.fillRect(startingPoint, normalSleepDayHeight - 8, startingPoint + blockSize, normalSleepDayHeight + 6);
   g.setColor(textColor);
-  g.drawString(sleepText, startingPoint - (percentOfBlock * blockSize) + (blockSize / 2), normalSleepDayHeight);
+  g.drawString(sleepText, startingPoint + (blockSize / 2), normalSleepDayHeight);
 }
+
 
 
 
 function printNormalSleepDays(normalDate) {
   var sleepInfo = getNormalSleepInfo(normalDate.hour);
   var percentOfBlock = sleepInfo.internalBlockTime / sleepInfo.blockWidth;
-  printNormalSleepDay(sleepInfo.text, sleepInfo.blockSize, sleepInfo.textColor, sleepInfo.blockColor, percentOfBlock, screenWidth / 2);
+  var startingPoint = (screenWidth / 2) - (percentOfBlock * sleepInfo.blockSize);
 
-  printNormalSleepDay(sleepInfo.otherText, sleepInfo.blockSize, sleepInfo.otherTextColor, sleepInfo.otherBlockColor, percentOfBlock, screenWidth / 2 - sleepInfo.blockSize);
-  printNormalSleepDay(sleepInfo.text, sleepInfo.blockSize, sleepInfo.textColor, sleepInfo.blockColor, percentOfBlock, screenWidth / 2 - (sleepInfo.blockSize * 2));
+  printNormalSleepDay(sleepInfo.text, sleepInfo.blockSize, sleepInfo.textColor, sleepInfo.blockColor, startingPoint);
 
-  printNormalSleepDay(sleepInfo.otherText, sleepInfo.blockSize, sleepInfo.otherTextColor, sleepInfo.otherBlockColor, percentOfBlock, screenWidth / 2 + sleepInfo.blockSize);
-  printNormalSleepDay(sleepInfo.text, sleepInfo.blockSize, sleepInfo.textColor, sleepInfo.blockColor, percentOfBlock, screenWidth / 2 + (sleepInfo.blockSize * 2));
+  printNormalSleepDay(sleepInfo.otherText, sleepInfo.otherBlockSize, sleepInfo.otherTextColor, sleepInfo.otherBlockColor, startingPoint - sleepInfo.otherBlockSize);
+  printNormalSleepDay(sleepInfo.text, sleepInfo.blockSize, sleepInfo.textColor, sleepInfo.blockColor, startingPoint - sleepInfo.otherBlockSize - sleepInfo.blockSize);
+
+  printNormalSleepDay(sleepInfo.otherText, sleepInfo.otherBlockSize, sleepInfo.otherTextColor, sleepInfo.otherBlockColor, startingPoint + sleepInfo.blockSize);
+  printNormalSleepDay(sleepInfo.text, sleepInfo.blockSize, sleepInfo.textColor, sleepInfo.blockColor, startingPoint + sleepInfo.otherBlockSize + sleepInfo.blockSize);
 }
 
 function getNormalSleepInfo(normalHour) {
   var text;
   var otherText;
   var blockSize;
+  var otherBlockSize;
   var blockWidth;
   var internalBlockTime;
   var textColor;
@@ -301,6 +305,7 @@ function getNormalSleepInfo(normalHour) {
     text = "Awake";
     otherText = "Sleep";
     blockSize = (normalDayWidth / timeWidth) * screenWidth * (normalAwakeHours / normalDayWidth);
+    otherBlockSize = (normalDayWidth / timeWidth) * screenWidth * (normalSleepHours / normalDayWidth);
     blockWidth = normalAwakeHours;
     internalBlockTime = normalHour - 8;
     textColor = awakeTextColor;
@@ -311,6 +316,7 @@ function getNormalSleepInfo(normalHour) {
     text = "Sleep";
     otherText = "Awake";
     blockSize = (normalDayWidth / timeWidth) * screenWidth * (normalSleepHours / normalDayWidth);
+    otherBlockSize = (normalDayWidth / timeWidth) * screenWidth * (normalAwakeHours / normalDayWidth);
     blockWidth = normalSleepHours;
     textColor = sleepTextColor;
     blockColor = sleepBlockColor;
@@ -327,6 +333,7 @@ function getNormalSleepInfo(normalHour) {
     "text": text,
     "otherText": otherText,
     "blockSize": blockSize,
+    "otherBlockSize": otherBlockSize,
     "blockWidth": blockWidth,
     "textColor": textColor,
     "blockColor": blockColor,
@@ -346,7 +353,7 @@ function drawClockPointer() {
   g.fillPoly([
     middle, circleBottom,
     middle - 25, circleBottom - 5,
-    middle - 45, circleBottom - 16,
+    middle - 40, circleBottom - 16,
     middle - 10, circleBottom + 5,
     middle - 3, circleBottom + 10,
     middle, circleBottom + 15
@@ -355,7 +362,7 @@ function drawClockPointer() {
   g.fillPoly([
     middle, circleBottom,
     middle + 25, circleBottom - 5,
-    middle + 45, circleBottom - 16,
+    middle + 40, circleBottom - 16,
     middle + 10, circleBottom + 5,
     middle + 3, circleBottom + 10,
     middle, circleBottom + 15
@@ -364,7 +371,7 @@ function drawClockPointer() {
   g.fillPoly([
     middle, circleTop,
     middle - 25, circleTop + 5,
-    middle - 45, circleTop + 16,
+    middle - 40, circleTop + 16,
     middle - 10, circleTop - 5,
     middle - 3, circleTop - 10,
     middle, circleTop - 15
@@ -374,7 +381,7 @@ function drawClockPointer() {
   g.fillPoly([
     middle, circleTop,
     middle + 25, circleTop + 5,
-    middle + 45, circleTop + 16,
+    middle + 40, circleTop + 16,
     middle + 10, circleTop - 5,
     middle + 3, circleTop - 10,
     middle, circleTop - 15
@@ -420,6 +427,7 @@ function printTime() {
   printNormalWeekDays(normalDate);
 
   g.setColor(sleepTextColor);
+  g.setFont("6x8", 1);
   printWeirdSleepDays(weirdDate);
   printNormalSleepDays(normalDate);
 }
