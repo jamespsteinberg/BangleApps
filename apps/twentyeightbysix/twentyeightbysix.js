@@ -206,7 +206,7 @@ function getWeirdSleepInfo(weirdHour) {
   var blockColor;
   var otherTextColor;
   var otherBlockColor;
-  if(weirdHour >= 8 || weirdHour <= 27) {
+  if(weirdHour >= 8 && weirdHour <= 27) {
     text = "Awake";
     otherText = "Sleep";
     blockSize = (weirdDayWidth / timeWidth) * screenWidth * (weirdAwakeHours / weirdDayWidth);
@@ -321,7 +321,7 @@ function getNormalSleepInfo(normalHour) {
   var blockColor;
   var otherTextColor;
   var otherBlockColor;
-  if(normalHour >= 8 || normalHour <= 23) {
+  if(normalHour >= 8 && normalHour <= 23) {
     text = "Awake";
     otherText = "Sleep";
     blockSize = (normalDayWidth / timeWidth) * screenWidth * (normalAwakeHours / normalDayWidth);
@@ -443,7 +443,7 @@ function getNormalEvent(date) {
     }
     return "Weekend";
   }
-  else if(date.hour >= 9 || date.hour <= 17) {
+  else if(date.hour >= 9 && date.hour <= 17) {
     if(date.dayText == "Monday" && date.hour == 9 && date.minute <= 15) {
       return "Starting Work";
     }
@@ -489,7 +489,7 @@ function getWeirdEvent(date) {
     }
     return "Weekend";
   }
-  else if(date.hour >= 9 || date.hour <= 19) {
+  else if(date.hour >= 9 && date.hour <= 19) {
     if(date.dayText == "Monday" && date.hour == 9 && date.minute <= 15) {
       return "Starting Work";
     }
