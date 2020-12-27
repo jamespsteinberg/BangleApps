@@ -600,11 +600,14 @@ printTime(now, true);
 
 function isPrintTime() {
   var currentTime = new Date();
-  if((currentTime.getMinutes() != minute && lookBack) || lookBack) {
-    lookBack = false;
-    timeout = false;
-    minute = currentTime.getMinutes();
-    printTime(currentTime, true);
+  var thisMinute = currentTime.getMinutes();
+  if(thisMinute != minute) {
+    if(lookBack) {
+      lookBack = false;
+      timeout = false;
+      minute = thisMinute;
+      printTime(currentTime, true);
+    }
   }
 }
 
