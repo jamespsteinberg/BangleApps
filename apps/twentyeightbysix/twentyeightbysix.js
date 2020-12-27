@@ -616,8 +616,15 @@ Bangle.on('lcdPower',on=>{
   secondInterval = undefined;
   if (on) {
     secondInterval = setInterval(isPrintTime, 1000);
+  } else {
+    if(secondInterval) {
+      clearInterval(secondInterval);
+      secondInterval = undefined;
+      //console.log("interval is cleared");
+    }
   }
 });
+
 
 function lookCurrent() {
   lookBack = true;
