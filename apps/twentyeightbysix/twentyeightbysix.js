@@ -616,7 +616,6 @@ Bangle.on('lcdPower',on=>{
   secondInterval = undefined;
   if (on) {
     secondInterval = setInterval(isPrintTime, 1000);
-    isPrintTime(); // draw immediately
   }
 });
 
@@ -661,6 +660,4 @@ setWatch(() => {
   timeout = setTimeout(()=>lookCurrent(), 3000);
 }, BTN3, { repeat: true, edge: "falling" });
 
-Bangle.loadWidgets();
-// Show launcher when middle button pressed
 setWatch(Bangle.showLauncher, BTN2, { repeat: false, edge: "falling" });
