@@ -447,12 +447,12 @@ function getWeirdEvent(date) {
   }
   else if(date.hour == 14) {
     if(date.minute <= 15) {
-      return "Starting Lunch";
+      return "Starting Lincoln Lunch";
     }
     else if(date.minute >= 45) {
-      return "Ending Lunch";
+      return "Ending Lincoln Lunch";
     }
-    return "Lunch";
+    return "Lincoln Lunch";
   }
   else if(date.hour == 23) {
     if(date.minute <= 15) {
@@ -481,23 +481,26 @@ function getWeirdEvent(date) {
   return "";
 }
 
+function getWeirdHourLabel(hour){
+  if(hour == 13) {
+    return ["Mid-day", "Nothingness", ""];
+  }
+  else if(hour == 14) {
+    return ["Forescoreteen", "Lincoln's", "Hour"];
+  }
+  else if(hour == 27) {
+    return ["", "Threeteen", ""];
+  } else if (hour == 28) {
+    return ["", "The Void", ""];
+  }
+  return ["", "", ""];
+}
+
 
 
 function printTime() {
 
-  g.setColor(backgroundColor);
-  g.fillRect(0, normalSleepDayHeight + 6, screenWidth, weirdSleepDayHeight - 6);
-
-  g.setColor(mainTextColor);
-  g.drawLine(0, screenHeight / 2, 64, screenHeight / 2);
-  g.drawLine(173, screenHeight / 2, screenWidth, screenHeight / 2);
-
-  g.setColor(watchColor);
-  g.drawCircle(screenWidth / 2, screenHeight / 2, 55);
-  g.drawCircle(screenWidth / 2, screenHeight / 2, 54);
-  g.drawCircle(screenWidth / 2, screenHeight / 2, 53);
-
-  drawClockPointer();
+  printBackground();
 
   var now = new Date();
   var weirdDate = normalTo28HourDate(now);
@@ -515,12 +518,17 @@ function printTime() {
   g.setFont("6x8", 2);
   g.drawString(normalTime, screenWidth / 2 + 3, 84);
 
-  g.drawString("24x7", 30, normalSleepDayHeight + 35);
-  g.drawString("28x6", 30, weirdSleepDayHeight - 35);
+  g.setFont("6x8", 1);
+  var threeLabels = getWeirdHourLabel(weirdDate.hour);
+  g.drawString(threeLabels[0], screenWidth / 2 + 3, weirdSleepDayHeight - 70);
+  g.drawString(threeLabels[1], screenWidth / 2 + 3, weirdSleepDayHeight - 60);
+  g.drawString(threeLabels[2], screenWidth / 2 + 3, weirdSleepDayHeight - 50);
 
-  g.drawString(getNormalEvent(normalDate), screenWidth / 2 + 3, normalSleepDayHeight + 18);
-  g.drawString(getWeirdEvent(weirdDate), screenWidth / 2 + 3, weirdSleepDayHeight - 18);
+  g.setFont("6x8", 1);
+  g.drawString(getNormalEvent(normalDate), screenWidth / 2 + 3, normalSleepDayHeight + 16);
+  g.drawString(getWeirdEvent(weirdDate), screenWidth / 2 + 3, weirdSleepDayHeight - 16);
 
+  g.setFont("6x8", 2);
   printWeirdWeekDays(weirdDate);
   printNormalWeekDays(normalDate);
 
@@ -528,6 +536,27 @@ function printTime() {
   g.setFont("6x8", 1);
   printWeirdSleepDays(weirdDate);
   printNormalSleepDays(normalDate);
+}
+
+function printBackground() {
+  g.setFontAlign(0, 0, 0);
+  g.setColor(backgroundColor);
+  g.fillRect(0, normalSleepDayHeight + 6, screenWidth, weirdSleepDayHeight - 6);
+
+  g.setColor(mainTextColor);
+  g.drawLine(0, screenHeight / 2, 64, screenHeight / 2);
+  g.drawLine(173, screenHeight / 2, screenWidth, screenHeight / 2);
+
+  g.setFont("6x8", 2);
+  g.drawString("24x7", 30, normalSleepDayHeight + 50);
+  g.drawString("28x6", 30, weirdSleepDayHeight - 50);
+
+  g.setColor(watchColor);
+  g.drawCircle(screenWidth / 2, screenHeight / 2, 55);
+  g.drawCircle(screenWidth / 2, screenHeight / 2, 54);
+  g.drawCircle(screenWidth / 2, screenHeight / 2, 53);
+
+  drawClockPointer();
 }
 
 printTime();
