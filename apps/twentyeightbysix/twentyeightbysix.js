@@ -498,11 +498,10 @@ function getWeirdHourLabel(hour){
 
 
 
-function printTime() {
+function printTime(now) {
 
   printBackground();
 
-  var now = new Date();
   var weirdDate = normalTo28HourDate(now);
   var normalDate = getNormalDateText(now);
 
@@ -541,7 +540,7 @@ function printTime() {
 function printBackground() {
   g.setFontAlign(0, 0, 0);
   g.setColor(backgroundColor);
-  g.fillRect(0, normalSleepDayHeight + 6, screenWidth, weirdSleepDayHeight - 6);
+  g.fillRect(0, normalSleepDayHeight + 9, screenWidth, weirdSleepDayHeight - 9);
 
   g.setColor(mainTextColor);
   g.drawLine(0, screenHeight / 2, 64, screenHeight / 2);
@@ -559,21 +558,30 @@ function printBackground() {
   drawClockPointer();
 }
 
-printTime();
+var now = new Date();
+var minute = now.getMinutes();
+printTime(now);
 
-var secondInterval = setInterval(printTime, 1000);
+function isPrintTime() {
+  var currentTime = new Date();
+  if(currentTime.getMinutes() != minute) {
+    minute = currentTime.getMinutes();
+    printTime(currentTime);
+  }
+}
+
+var secondInterval = setInterval(isPrintTime, 1000);
 // Stop updates when LCD is off, restart when on
 Bangle.on('lcdPower',on=>{
   if (secondInterval) clearInterval(secondInterval);
   secondInterval = undefined;
   if (on) {
-    secondInterval = setInterval(draw, 1000);
-    printTime(); // draw immediately
+    secondInterval = setInterval(isPrintTime, 1000);
+    isPrintTime(); // draw immediately
   }
 });
 
 
 Bangle.loadWidgets();
-Bangle.drawWidgets();
 // Show launcher when middle button pressed
 setWatch(Bangle.showLauncher, BTN2, { repeat: false, edge: "falling" });
