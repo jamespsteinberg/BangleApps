@@ -10,7 +10,7 @@
 const Locale = require('locale');
 
 const PREFERENCE_FILE = "matrixclock.settings.json";
-const settings = Object.assign({color: "theme", time_format: '12 hour', intensity: 'light'},
+const settings = Object.assign({color: "theme", time_format: '12 hour', intensity: 'high'},
     require('Storage').readJSON(PREFERENCE_FILE, true) || {});
 
 var format_time;
@@ -173,6 +173,7 @@ function randomChar(){
   return String.fromCharCode(Math.floor(Math.random() * CHAR_CODE_LENGTH)+ CHAR_CODE_START);
 }
 
+
 // Now set up the shards
 // we are going to have a limited no of shards (to save cpu)
 // but randomize the x value and length every reset to make it look as if there
@@ -229,10 +230,18 @@ function draw_clock(){
 
   g.setFont("Vector", g.getWidth() / 5);
   g.setFontAlign(0,-1);
-  if(last_draw_time == null || now.getMinutes() != last_draw_time.getMinutes()){
+  if (Math.random() > 0.9) {
+    
+    timeStr = "DO NOT \n TRUST";
+      g.drawString(timeStr, w/2, TIME_Y_COORD - 100);
+
+
+  } else {
+
     g.setColor(bg_color[0],bg_color[1],bg_color[2]);
     g.drawString(timeStr, w/2, TIME_Y_COORD);
     timeStr = format_time(now);
+
   }
   g.setColor(fg_color[0], fg_color[1], fg_color[2]);
   g.drawString(timeStr, w/2, TIME_Y_COORD);
@@ -243,7 +252,8 @@ function draw_clock(){
   if(last_draw_time == null || now.getDate() != last_draw_time.getDate()){
     g.setColor(bg_color[0],bg_color[1],bg_color[2]);
     g.drawString(dateStr, w/2, DATE_Y_COORD);
-    dateStr = format_date(now);
+    //dateStr = format_date(now);
+    dateStr = "Follow the white rabbit...";
   }
   g.setColor(fg_color[0], fg_color[1], fg_color[2]);
   g.drawString(dateStr, w/2, DATE_Y_COORD);
@@ -262,18 +272,19 @@ function format_time_24_hour(now){
 }
 
 function format_time_12_hour(now){
-  var time = new Date(now.getTime());
-  var hours = time.getHours() % 12;
-  if(hours < 1){
-    hours = 12;
-  }
-  var am_pm;
-  if(time.getHours() < 12){
-    am_pm = "AM";
-  } else {
-    am_pm = "PM";
-  }
-  return format00(hours) + ":" + format00(time.getMinutes()) + " "+ am_pm;
+  
+    var time = new Date(now.getTime());
+    var hours = time.getHours() % 12;
+    if(hours < 1){
+      hours = 12;
+    }
+    var am_pm;
+    if(time.getHours() < 12){
+      am_pm = "AM";
+    } else {
+      am_pm = "PM";
+    }
+    return format00(hours) + ":" + format00(time.getMinutes()) + " "+ am_pm;
 }
 
 function format00(num){
@@ -304,12 +315,8 @@ function startTimers(){
   clearTimers();
   if (Bangle.isLCDOn()) {
     intervalRef = setInterval(() => {
-          if (!shouldRedraw()) {
-            //console.log("draw clock callback - skipped redraw");
-          } else {
-            draw_clock();
-          }
-        }, 100
+          draw_clock();
+        }, 50
     );
     draw_clock();
   } else {
